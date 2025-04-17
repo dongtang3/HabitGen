@@ -11,6 +11,10 @@ try {
   }
 }
 
+// 为GitHub Pages添加repository名称，请根据您的实际仓库名称修改
+const repoName = 'HabitGen'
+const isGithubActions = process.env.GITHUB_ACTIONS === 'true'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export', // Add this line for static export
@@ -23,6 +27,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // 根据环境变量动态添加 basePath 和 assetPrefix
+  basePath: isGithubActions ? `/${repoName}` : '',
+  assetPrefix: isGithubActions ? `/${repoName}/` : '',
   experimental: {
     webpackBuildWorker: true,
     parallelServerBuildTraces: true,
