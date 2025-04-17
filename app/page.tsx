@@ -6,18 +6,18 @@ import { Check, Edit3, Target, Timer } from "lucide-react"
 export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-slate-100">
-      <div className="w-full max-w-md mx-auto overflow-hidden bg-slate-600 text-white rounded-lg shadow-xl">
-        {/* Phone frame */}
-        <div className="relative w-full h-full">
-          {/* Status bar */}
-          <div className="flex justify-between items-center p-2 bg-slate-700">
-            <span className="text-xs">AT&T</span>
-            <div className="flex items-center space-x-1">
-              <span className="text-xs">●●●●●</span>
-              <span className="text-xs">●●●</span>
-            </div>
+      {/* Apply flex flex-col and fixed height */}
+      <div className="w-full max-w-md mx-auto overflow-hidden bg-slate-600 text-white rounded-lg shadow-xl flex flex-col h-[calc(100vh-2rem)] max-h-[800px]">
+        {/* Status bar */}
+        <div className="flex justify-between items-center p-2 bg-slate-700 flex-shrink-0">
+          <span className="text-xs">AT&T</span>
+          <div className="flex items-center space-x-1">
+            <span className="text-xs">●●●</span>
           </div>
+        </div>
 
+        {/* Wrap main content and give it flex-grow */}
+        <div className="flex flex-col flex-grow overflow-y-auto">
           {/* Main content */}
           <div className="p-4">
             <h1 className="text-2xl font-bold text-center mb-2">HabitGen</h1>
@@ -32,18 +32,18 @@ export default function Home() {
               </div>
               <div className="absolute left-16 top-10">
                 <Image
-                  src="/placeholder.svg?height=50&width=30"
-                  width={30}
-                  height={50}
+                  src="/left.svg?height=300&width=60"
+                  width={60}
+                  height={300}
                   alt="Decorative element"
                   className="opacity-70"
                 />
               </div>
               <div className="absolute right-16 top-10">
                 <Image
-                  src="/placeholder.svg?height=50&width=30"
-                  width={30}
-                  height={50}
+                  src="/right.svg?height=300&width=60"
+                  width={60}
+                  height={300}
                   alt="Decorative element"
                   className="opacity-70"
                 />
@@ -61,7 +61,8 @@ export default function Home() {
               <div className="flex-1 h-1 bg-slate-400 mx-2"></div>
             </div>
 
-            <ScrollArea className="h-64 pr-4">
+            {/* Make ScrollArea expand within the flex container */}
+            <ScrollArea className="h-auto flex-grow pr-4">
               {/* Tasks list */}
               <div className="space-y-4">
                 <div className="flex items-center">
@@ -108,19 +109,19 @@ export default function Home() {
               </div>
             </ScrollArea>
           </div>
+        </div>
 
-          {/* Bottom navigation */}
-          <div className="flex justify-between p-4 mt-4">
-            <Link href="/" className="w-24 py-3 bg-slate-800 text-white text-center rounded-full font-medium">
-              HOME
-            </Link>
-            <Link href="/input" className="w-24 py-3 bg-white text-slate-800 text-center rounded-full font-medium">
-              INPUT
-            </Link>
-            <Link href="/analytics" className="w-24 py-3 bg-white text-slate-800 text-center rounded-full font-medium">
-              ANALYTICS
-            </Link>
-          </div>
+        {/* Bottom navigation */}
+        <div className="flex justify-between p-4 mt-auto border-t border-slate-500 flex-shrink-0">
+          <Link href="/" className="w-24 py-3 bg-slate-800 text-white text-center rounded-full font-medium">
+            HOME
+          </Link>
+          <Link href="/input" className="w-24 py-3 bg-white text-slate-800 text-center rounded-full font-medium">
+            INPUT
+          </Link>
+          <Link href="/analytics" className="w-24 py-3 bg-white text-slate-800 text-center rounded-full font-medium">
+            ANALYTICS
+          </Link>
         </div>
       </div>
     </div>
