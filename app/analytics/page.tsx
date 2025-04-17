@@ -1,5 +1,7 @@
 import Link from "next/link"
 import { Progress } from "@/components/ui/progress"
+import { Button } from "@/components/ui/button"
+import { X, Check } from "lucide-react"
 
 export default function AnalyticsPage() {
   return (
@@ -12,6 +14,20 @@ export default function AnalyticsPage() {
             <span className="text-xs">●●●●●</span>
             <span className="text-xs">●●●</span>
           </div>
+        </div>
+
+        {/* Header with close/confirm buttons */}
+        <div className="flex justify-between p-4">
+          <Link href="/">
+            <Button variant="ghost" size="icon" className="text-red-500 h-8 w-8">
+              <X className="h-6 w-6" />
+            </Button>
+          </Link>
+          <Link href="/">
+            <Button variant="ghost" size="icon" className="text-green-500 h-8 w-8">
+              <Check className="h-6 w-6" />
+            </Button>
+          </Link>
         </div>
 
         {/* Main content */}

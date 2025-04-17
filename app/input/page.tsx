@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { X, Check, HelpCircle, Filter, RotateCcw, Target, Clock, List } from "lucide-react"
+import Link from "next/link"
 
 export default function InputPage() {
   const [activeTab, setActiveTab] = useState("quote")
@@ -26,12 +27,16 @@ export default function InputPage() {
 
         {/* Header with close/confirm buttons */}
         <div className="flex justify-between p-4">
-          <Button variant="ghost" size="icon" className="text-red-500 h-8 w-8">
-            <X className="h-6 w-6" />
-          </Button>
-          <Button variant="ghost" size="icon" className="text-green-500 h-8 w-8">
-            <Check className="h-6 w-6" />
-          </Button>
+          <Link href="/">
+            <Button variant="ghost" size="icon" className="text-red-500 h-8 w-8">
+              <X className="h-6 w-6" />
+            </Button>
+          </Link>
+          <Link href="/">
+            <Button variant="ghost" size="icon" className="text-green-500 h-8 w-8">
+              <Check className="h-6 w-6" />
+            </Button>
+          </Link>
         </div>
 
         {/* Tab navigation */}

@@ -3,15 +3,15 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # 设置为您的默认分支名称，如果您使用 master，请改为 master
+      - main  
 
-# 设置 GITHUB_TOKEN 的权限
+
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 允许一个并发部署
+
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -63,7 +63,7 @@ jobs:
         with:
           path: ./out
 
-  # 部署任务
+
   deploy:
     environment:
       name: github-pages
