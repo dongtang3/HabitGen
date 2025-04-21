@@ -35,6 +35,8 @@ const nextConfig = {
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
   },
+  // 确保所有静态资源都被复制到输出目录
+  distDir: 'out',
 }
 
 if (userConfig) {
