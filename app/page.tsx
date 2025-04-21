@@ -126,7 +126,7 @@ export default function Home() {
               </Button>
               <div className="absolute left-16 top-10">
                 <Image
-                  src="/left.svg?height=300&width=60"
+                  src="/left.svg"
                   width={60}
                   height={300}
                   alt="Decorative element"
@@ -135,7 +135,7 @@ export default function Home() {
               </div>
               <div className="absolute right-16 top-10">
                 <Image
-                  src="/right.svg?height=300&width=60"
+                  src="/right.svg"
                   width={60}
                   height={300}
                   alt="Decorative element"
