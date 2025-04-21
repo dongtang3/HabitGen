@@ -124,24 +124,6 @@ export default function Home() {
               >
                 <ChevronRight className="w-6 h-6" />
               </Button>
-              <div className="absolute left-16 top-10">
-                <Image
-                  src="/left.svg"
-                  width={60}
-                  height={300}
-                  alt="Decorative element"
-                  className="opacity-70"
-                />
-              </div>
-              <div className="absolute right-16 top-10">
-                <Image
-                  src="/right.svg"
-                  width={60}
-                  height={300}
-                  alt="Decorative element"
-                  className="opacity-70"
-                />
-              </div>
             </div>
 
             {/* Date display */}
