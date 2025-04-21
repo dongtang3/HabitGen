@@ -13,18 +13,26 @@ import Link from "next/link"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
+import { useQuotes } from "@/lib/QuoteContext"
+import { useRouter } from "next/navigation"
 
-interface Quote { id: number; name: string; }
 interface Habit { id: number; name: string; }
 interface Task { id: number; name: string; }
 
 export default function InputPage() {
+  const router = useRouter()
+  const { quotes, addQuote, removeQuote } = useQuotes()
   const [activeTab, setActiveTab] = useState("quote")
+  
+  // Default values for inputs
+  const [quoteName, setQuoteName] = useState("Inspirational Quote")
+  const [quoteText, setQuoteText] = useState("The best way to predict the future is to create it.")
+  const [quoteAuthor, setQuoteAuthor] = useState("Unknown")
 
-  const [quotes, setQuotes] = useState<Quote[]>([
-    { id: 1, name: "Quote 1" },
-    { id: 2, name: "Quote 2" },
-  ])
+  const [habitName, setHabitName] = useState("Morning Meditation")
+
+  const [taskName, setTaskName] = useState("Complete Project Proposal")
+
   const [habits, setHabits] = useState<Habit[]>([
     { id: 1, name: "Read" },
     { id: 2, name: "Drink Water" },
@@ -47,10 +55,17 @@ export default function InputPage() {
   const [taskStartsDate, setTaskStartsDate] = useState<Date | undefined>(new Date())
   const [taskEndsDate, setTaskEndsDate] = useState<Date | undefined>(new Date())
 
-  const handleRemoveQuote = (idToRemove: number) => {
-    setQuotes(currentQuotes => currentQuotes.filter(quote => quote.id !== idToRemove));
-    console.log(`Removing quote with id: ${idToRemove}`);
+  const handleAddQuote = () => {
+    if (quoteText && quoteAuthor) {
+      addQuote(quoteText, quoteAuthor)
+      setQuoteText("")
+      setQuoteName("Inspirational Quote")
+      setQuoteAuthor("")
+      // Navigate back to home to see the new quote
+      router.push('/')
+    }
   }
+
   const handleRemoveHabit = (idToRemove: number) => {
     setHabits(currentHabits => currentHabits.filter(habit => habit.id !== idToRemove));
     console.log(`Removing habit with id: ${idToRemove}`);
@@ -76,11 +91,18 @@ export default function InputPage() {
                 <X className="h-6 w-6" />
               </Button>
             </Link>
-            <Link href="/">
-              <Button variant="ghost" size="icon" className="text-green-500 h-8 w-8">
-                <Check className="h-6 w-6" />
-              </Button>
-            </Link>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="text-green-500 h-8 w-8"
+              onClick={() => {
+                if (activeTab === "quote") {
+                  handleAddQuote()
+                }
+              }}
+            >
+              <Check className="h-6 w-6" />
+            </Button>
           </div>
           <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full flex flex-col flex-grow">
             <TabsList className="grid grid-cols-3 w-full bg-transparent flex-shrink-0 px-4 pt-2 pb-4 gap-2">
@@ -116,7 +138,13 @@ export default function InputPage() {
                       <Label htmlFor="quote-name" className="flex items-center">
                         Quote Name <span className="text-red-500 ml-1">*</span>
                       </Label>
-                      <Input id="quote-name" className="bg-slate-400 border-none" />
+                      <Input 
+                        id="quote-name" 
+                        className="bg-slate-400 border-none" 
+                        value={quoteName}
+                        onChange={(e) => setQuoteName(e.target.value)}
+                        placeholder="Enter quote name..."
+                      />
                     </div>
                   </div>
 
@@ -124,7 +152,26 @@ export default function InputPage() {
                     <Label htmlFor="quote-text" className="flex items-center">
                       Quote Text <span className="text-red-500 ml-1">*</span>
                     </Label>
-                    <Textarea id="quote-text" className="bg-slate-400 border-none h-32" />
+                    <Textarea 
+                      id="quote-text" 
+                      className="bg-slate-400 border-none h-32" 
+                      value={quoteText}
+                      onChange={(e) => setQuoteText(e.target.value)}
+                      placeholder="Enter inspirational quote text..."
+                    />
+                  </div>
+
+                  <div className="mb-4">
+                    <Label htmlFor="quote-author" className="flex items-center">
+                      Author <span className="text-red-500 ml-1">*</span>
+                    </Label>
+                    <Input 
+                      id="quote-author" 
+                      className="bg-slate-400 border-none" 
+                      value={quoteAuthor}
+                      onChange={(e) => setQuoteAuthor(e.target.value)}
+                      placeholder="Enter quote author..."
+                    />
                   </div>
 
                   <div className="flex items-center mb-4">
@@ -152,12 +199,12 @@ export default function InputPage() {
                   <div className="space-y-4">
                     {quotes.map((quote) => (
                       <div key={quote.id} className="flex justify-between items-center">
-                        <p>{quote.name}</p>
+                        <p>{quote.text.length > 25 ? quote.text.substring(0, 25) + "..." : quote.text}</p>
                         <Button
                           variant="outline"
                           size="icon"
                           className="h-8 w-8 bg-slate-600"
-                          onClick={() => handleRemoveQuote(quote.id)}
+                          onClick={() => removeQuote(quote.id)}
                         >
                           <Eraser className="h-5 w-5" />
                         </Button>
@@ -178,7 +225,13 @@ export default function InputPage() {
                       <Label htmlFor="habit-name" className="flex items-center">
                         Habit Name <span className="text-red-500 ml-1">*</span>
                       </Label>
-                      <Input id="habit-name" className="bg-slate-400 border-none" />
+                      <Input 
+                        id="habit-name" 
+                        className="bg-slate-400 border-none" 
+                        value={habitName}
+                        onChange={(e) => setHabitName(e.target.value)}
+                        placeholder="Enter habit name..."
+                      />
                     </div>
                   </div>
 
@@ -268,7 +321,13 @@ export default function InputPage() {
                       <Label htmlFor="task-name" className="flex items-center">
                         Task Name <span className="text-red-500 ml-1">*</span>
                       </Label>
-                      <Input id="task-name" className="bg-slate-400 border-none" />
+                      <Input 
+                        id="task-name" 
+                        className="bg-slate-400 border-none"
+                        value={taskName}
+                        onChange={(e) => setTaskName(e.target.value)} 
+                        placeholder="Enter task name..."
+                      />
                     </div>
                   </div>
 

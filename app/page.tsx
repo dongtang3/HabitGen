@@ -1,9 +1,76 @@
+"use client"
+
 import Image from "next/image"
 import Link from "next/link"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Check, Edit3, Target, Timer } from "lucide-react"
+import { Check, Edit3, Target, Timer, ChevronLeft, ChevronRight, Pencil } from "lucide-react"
+import { useQuotes } from "@/lib/QuoteContext"
+import { useEffect, useState } from "react"
+import { format } from "date-fns"
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
 
 export default function Home() {
+  const { quotes, editQuote } = useQuotes()
+  const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0)
+  const [currentDate, setCurrentDate] = useState("")
+  
+  // State for the edit dialog
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [editQuoteText, setEditQuoteText] = useState("")
+  const [editQuoteAuthor, setEditQuoteAuthor] = useState("")
+
+  // Get the current date
+  useEffect(() => {
+    const now = new Date()
+    setCurrentDate(format(now, "MMMM d, yyyy"))
+  }, [])
+
+  // Navigate to previous quote
+  const prevQuote = () => {
+    setCurrentQuoteIndex((prevIndex) => 
+      prevIndex > 0 ? prevIndex - 1 : quotes.length - 1
+    )
+  }
+
+  // Navigate to next quote
+  const nextQuote = () => {
+    setCurrentQuoteIndex((prevIndex) => 
+      prevIndex < quotes.length - 1 ? prevIndex + 1 : 0
+    )
+  }
+
+  // Open edit dialog with current quote
+  const openEditDialog = () => {
+    if (quotes.length > 0) {
+      setEditQuoteText(quotes[currentQuoteIndex].text)
+      setEditQuoteAuthor(quotes[currentQuoteIndex].author)
+      setEditDialogOpen(true)
+    }
+  }
+
+  // Save edited quote
+  const saveEditedQuote = () => {
+    if (quotes.length > 0 && editQuoteText && editQuoteAuthor) {
+      const currentQuoteId = quotes[currentQuoteIndex].id
+      editQuote(currentQuoteId, editQuoteText, editQuoteAuthor)
+      setEditDialogOpen(false)
+    }
+  }
+
+  // Auto-rotate quotes every 5 seconds (but stop when edit dialog is open)
+  useEffect(() => {
+    if (!editDialogOpen) {
+      const interval = setInterval(() => {
+        nextQuote()
+      }, 5000)
+      return () => clearInterval(interval)
+    }
+  }, [editDialogOpen, quotes.length])
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-slate-100">
       {/* Apply flex flex-col and fixed height */}
@@ -22,14 +89,41 @@ export default function Home() {
           <div className="p-4">
             <h1 className="text-2xl font-bold text-center mb-2">HabitGen</h1>
 
-            {/* Quote circle */}
+            {/* Quote circle with carousel */}
             <div className="relative flex justify-center mb-6">
-              <div className="w-40 h-40 rounded-full bg-slate-700 flex items-center justify-center p-4 border-4 border-slate-800">
+              <div 
+                className="w-40 h-40 rounded-full bg-slate-700 flex items-center justify-center p-4 border-4 border-slate-800 relative"
+                onClick={openEditDialog}
+              >
                 <div className="text-center">
-                  <p className="text-xs">"It always seems impossible until it is done"</p>
-                  <p className="text-xs mt-1">-Nelson Mandela</p>
+                  {quotes.length > 0 && (
+                    <>
+                      <p className="text-xs">"{quotes[currentQuoteIndex].text}"</p>
+                      <p className="text-xs mt-1">-{quotes[currentQuoteIndex].author}</p>
+                    </>
+                  )}
+                </div>
+                {/* Edit button overlay */}
+                <div className="absolute top-1 right-1 bg-slate-800 rounded-full p-1">
+                  <Pencil className="w-4 h-4" />
                 </div>
               </div>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="absolute left-4 top-1/2 transform -translate-y-1/2" 
+                onClick={prevQuote}
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="absolute right-4 top-1/2 transform -translate-y-1/2" 
+                onClick={nextQuote}
+              >
+                <ChevronRight className="w-6 h-6" />
+              </Button>
               <div className="absolute left-16 top-10">
                 <Image
                   src="/left.svg?height=300&width=60"
@@ -51,7 +145,7 @@ export default function Home() {
             </div>
 
             {/* Date display */}
-            <p className="text-center mb-4">Today is March 14, 2025</p>
+            <p className="text-center mb-4">Today is {currentDate}</p>
 
             {/* Progress slider */}
             <div className="flex items-center mb-6">
@@ -124,6 +218,51 @@ export default function Home() {
           </Link>
         </div>
       </div>
+
+      {/* Edit Quote Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="bg-slate-600 text-white">
+          <DialogHeader>
+            <DialogTitle>Edit Quote</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-quote-text">Quote Text</Label>
+              <Textarea 
+                id="edit-quote-text" 
+                value={editQuoteText} 
+                onChange={(e) => setEditQuoteText(e.target.value)}
+                className="bg-slate-500 border-slate-400 focus:border-slate-300"
+                rows={4}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-quote-author">Author</Label>
+              <Input 
+                id="edit-quote-author" 
+                value={editQuoteAuthor} 
+                onChange={(e) => setEditQuoteAuthor(e.target.value)}
+                className="bg-slate-500 border-slate-400 focus:border-slate-300"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button 
+              variant="outline"
+              onClick={() => setEditDialogOpen(false)}
+              className="bg-slate-700 hover:bg-slate-800 border-slate-500"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={saveEditedQuote}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
